@@ -11,6 +11,8 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -72,6 +74,33 @@ public class MainActivity extends Activity {
         //starting position
         float slimeXPosition = 10;
 
+        //new sprite sheet animation
+
+        //this is frame size
+        private int frameWidth = 150;
+        private int frameHeight = 150;
+
+        //how many frame is sprite sheet
+        private int frameCount = 4;
+
+        //start fisrt frame
+        private int currentFrame = 1;
+
+        //what time was it when we last changed frmaes
+        private long lastFrameChangeTime = 0;
+
+        //how should each frame last
+        private int frameLengthInMilliSeconds = 250;
+
+        //a rectangle to define area of the sprite sheet
+        //that represents 1 frame
+        private Rect frameToDraw = new Rect(0,0,frameWidth,frameHeight);
+
+        //a rect that defines an area of the screen
+        //on which to draw
+        private int theTop = 500;
+        RectF whereToDraw = new RectF (slimeXPosition,theTop , slimeXPosition + frameWidth, frameHeight + theTop);
+
         //Constructor
         public GameView(Context context){
             //asking survace class to setup our object
@@ -83,13 +112,17 @@ public class MainActivity extends Activity {
             paint = new Paint();
 
             //load png file
-            bitmapSlime = BitmapFactory.decodeResource(this.getResources(),R.drawable.slime_50x50);
+            bitmapSlime = BitmapFactory.decodeResource(this.getResources(),R.drawable.sprite_slime_150x600);
+            //scale bitmap to correct size
+            bitmapSlime = Bitmap.createScaledBitmap(bitmapSlime, frameWidth*frameCount,frameHeight, false);
+            //flip bitmap
             finalBitmapSlime = flipImage(bitmapSlime);
 
             //setboolean to true - game start
             playing = true;
         }
 
+        @Override
         public void run(){
             while (playing == true){
                 //capture the time in millisecond in startFrameTime
@@ -110,13 +143,13 @@ public class MainActivity extends Activity {
         //everything that needs to be updated goes here, same like unity void update()
         public void update(){
             //changing slime moving direction
-            if(slimeXPosition + 145 >= screenWidth){
+            if(slimeXPosition + frameWidth >= screenWidth){
                 //change slime direction to go left
                 isGoToRight = false;
                 //flip bitmap to the left
                 finalBitmapSlime = flipImage(bitmapSlime);
             }
-            else if(slimeXPosition <= 10){
+            else if(slimeXPosition <= 0){
                 //change slime direction to go right
                 isGoToRight = true;
                 //flip bitmap to the right
@@ -130,6 +163,23 @@ public class MainActivity extends Activity {
             else if (isMoving == true && isGoToRight == false){
                 slimeXPosition -= (walkSpeedPerSecond / fps);
             }
+        }
+
+        public void getCurrentFrame(){
+            long time = System.currentTimeMillis();
+            if(isMoving == true){
+                if(time > lastFrameChangeTime + frameLengthInMilliSeconds){
+                    lastFrameChangeTime = time;
+                    currentFrame++;
+                    if(currentFrame >= frameCount){
+                        currentFrame = 0;
+                    }
+                }
+            }
+            //update the left and right values of the source
+            //of the next frmae on the sprite sheet
+            frameToDraw.left = currentFrame * frameWidth;
+            frameToDraw.right = frameToDraw.left + frameWidth;
         }
 
         //drawing screen in here
@@ -162,7 +212,9 @@ public class MainActivity extends Activity {
                 }
 
                 //draw slime at (slimeXPosition, y px)
-                canvas.drawBitmap(finalBitmapSlime, slimeXPosition, 300, paint);
+                whereToDraw.set((int)slimeXPosition, theTop, (int)slimeXPosition + frameWidth, frameHeight + theTop);
+                getCurrentFrame();
+                canvas.drawBitmap(finalBitmapSlime, frameToDraw, whereToDraw, paint);
 
                 //draw everything in the screen
                 ourHolder.unlockCanvasAndPost((canvas));
