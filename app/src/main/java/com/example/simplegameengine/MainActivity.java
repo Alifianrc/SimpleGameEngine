@@ -57,9 +57,9 @@ public class MainActivity extends Activity {
         private long timeThisFrame;
 
         //declare an object type Bitmap
-        Bitmap bitmapSlime;
+        Bitmap bitmapDoraemon;
         //declare the final bitmap object
-        Bitmap finalBitmapSlime;
+        Bitmap finalBitmapDoraemon;
         //for double checking direction bitmap/image
         boolean isAlreadyRight = true;
 
@@ -72,16 +72,16 @@ public class MainActivity extends Activity {
         float walkSpeedPerSecond = 150;
 
         //starting position
-        float slimeXPosition = 10;
+        float doraemonXPosition = 10;
 
         //new sprite sheet animation
 
         //this is frame size
-        private int frameWidth = 150;
-        private int frameHeight = 150;
+        private int frameWidth = 300;
+        private int frameHeight = 300;
 
         //how many frame is sprite sheet
-        private int frameCount = 4;
+        private int frameCount = 6;
 
         //start fisrt frame
         private int currentFrame = 1;
@@ -90,7 +90,7 @@ public class MainActivity extends Activity {
         private long lastFrameChangeTime = 0;
 
         //how should each frame last
-        private int frameLengthInMilliSeconds = 250;
+        private int frameLengthInMilliSeconds = 150;
 
         //a rectangle to define area of the sprite sheet
         //that represents 1 frame
@@ -99,7 +99,7 @@ public class MainActivity extends Activity {
         //a rect that defines an area of the screen
         //on which to draw
         private int theTop = 500;
-        RectF whereToDraw = new RectF (slimeXPosition,theTop , slimeXPosition + frameWidth, frameHeight + theTop);
+        RectF whereToDraw = new RectF (doraemonXPosition,theTop , doraemonXPosition + frameWidth, frameHeight + theTop);
 
         //Constructor
         public GameView(Context context){
@@ -112,11 +112,11 @@ public class MainActivity extends Activity {
             paint = new Paint();
 
             //load png file
-            bitmapSlime = BitmapFactory.decodeResource(this.getResources(),R.drawable.sprite_slime_150x600);
+            bitmapDoraemon = BitmapFactory.decodeResource(this.getResources(),R.drawable.doraemon);
             //scale bitmap to correct size
-            bitmapSlime = Bitmap.createScaledBitmap(bitmapSlime, frameWidth*frameCount,frameHeight, false);
+            bitmapDoraemon = Bitmap.createScaledBitmap(bitmapDoraemon, frameWidth*frameCount,frameHeight, false);
             //flip bitmap
-            finalBitmapSlime = flipImage(bitmapSlime);
+            finalBitmapDoraemon = flipImage(bitmapDoraemon);
 
             //setboolean to true - game start
             playing = true;
@@ -143,25 +143,25 @@ public class MainActivity extends Activity {
         //everything that needs to be updated goes here, same like unity void update()
         public void update(){
             //changing slime moving direction
-            if(slimeXPosition + frameWidth >= screenWidth){
+            if(doraemonXPosition + frameWidth >= screenWidth){
                 //change slime direction to go left
                 isGoToRight = false;
                 //flip bitmap to the left
-                finalBitmapSlime = flipImage(bitmapSlime);
+                finalBitmapDoraemon = flipImage(bitmapDoraemon);
             }
-            else if(slimeXPosition <= 0){
+            else if(doraemonXPosition <= 0){
                 //change slime direction to go right
                 isGoToRight = true;
                 //flip bitmap to the right
-                finalBitmapSlime = flipImage(bitmapSlime);
+                finalBitmapDoraemon = flipImage(bitmapDoraemon);
             }
 
             //if player touch screen, slime moving
             if(isMoving == true && isGoToRight == true){
-                slimeXPosition += (walkSpeedPerSecond / fps);
+                doraemonXPosition += (walkSpeedPerSecond / fps);
             }
             else if (isMoving == true && isGoToRight == false){
-                slimeXPosition -= (walkSpeedPerSecond / fps);
+                doraemonXPosition -= (walkSpeedPerSecond / fps);
             }
         }
 
@@ -217,9 +217,9 @@ public class MainActivity extends Activity {
                 }
 
                 //draw slime at (slimeXPosition, y px)
-                whereToDraw.set((int)slimeXPosition, theTop, (int)slimeXPosition + frameWidth, frameHeight + theTop);
+                whereToDraw.set((int)doraemonXPosition, theTop, (int)doraemonXPosition + frameWidth, frameHeight + theTop);
                 getCurrentFrame();
-                canvas.drawBitmap(finalBitmapSlime, frameToDraw, whereToDraw, paint);
+                canvas.drawBitmap(finalBitmapDoraemon, frameToDraw, whereToDraw, paint);
 
                 //draw everything in the screen
                 ourHolder.unlockCanvasAndPost((canvas));
