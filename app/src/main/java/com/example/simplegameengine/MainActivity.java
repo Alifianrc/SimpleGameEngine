@@ -167,6 +167,7 @@ public class MainActivity extends Activity {
 
         public void getCurrentFrame(){
             long time = System.currentTimeMillis();
+            //if moving
             if(isMoving == true){
                 if(time > lastFrameChangeTime + frameLengthInMilliSeconds){
                     lastFrameChangeTime = time;
@@ -175,6 +176,10 @@ public class MainActivity extends Activity {
                         currentFrame = 0;
                     }
                 }
+            }
+            //if not moving change character to idle animation
+            else if(isMoving == false){
+                currentFrame = 1;
             }
             //update the left and right values of the source
             //of the next frmae on the sprite sheet
